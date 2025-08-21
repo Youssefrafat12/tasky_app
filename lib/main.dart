@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import 'providers/task_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(MyWidget());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => TaskProvider(),
+      child: const MyWidget(),
+    ),
+  );
 }
 
 class MyWidget extends StatelessWidget {
@@ -12,15 +18,15 @@ class MyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF121212),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF181818),
           foregroundColor: Color(0xFFFFFCFC),
         ),
-        scaffoldBackgroundColor: Color(0xFF121212),
-        textTheme: TextTheme(
+        scaffoldBackgroundColor: const Color(0xFF181818),
+        textTheme: const TextTheme(
           displayLarge: TextStyle(
             fontFamily: 'PlusJakartaSans',
             fontSize: 28,

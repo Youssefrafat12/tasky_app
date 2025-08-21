@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_task3/screens/welcome_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-  final _formkey = GlobalKey<FormState>();
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +39,14 @@ class HomeScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset('images/Vector.svg'),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Text(
                             'Tasky',
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                         ],
                       ),
-                      SizedBox(height: 116),
+                      const SizedBox(height: 116),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -42,27 +54,29 @@ class HomeScreen extends StatelessWidget {
                             'Welcome To Tasky',
                             style: Theme.of(context).textTheme.displayMedium,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           SvgPicture.asset('images/waving-hand.svg'),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Your productivity journey starts here.',
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       Center(child: SvgPicture.asset('images/pana.svg')),
-                      SizedBox(height: 28),
+                      const SizedBox(height: 28),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Form(
-                          key: _formkey,
+                          key: _formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.only(start: 3),
+                                padding: const EdgeInsetsDirectional.only(
+                                  start: 3,
+                                ),
                                 child: Text(
                                   'Full Name',
                                   style: Theme.of(
@@ -70,23 +84,20 @@ class HomeScreen extends StatelessWidget {
                                   ).textTheme.displaySmall,
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               TextFormField(
                                 controller: _nameController,
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                                 cursorColor: Colors.white,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) {
+                                  if (value == null || value.trim().isEmpty) {
                                     return 'Enter a valid name';
-                                  }
-                                  if (value.toLowerCase().trim() != 'youssef') {
-                                    return 'Please enter your name';
                                   }
                                   return null;
                                 },
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Color(0xFF282828),
+                                  fillColor: const Color(0xFF282828),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                     borderSide: BorderSide.none,
@@ -94,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                                   hintText: 'e.g. Sarah Khalid',
                                 ),
                               ),
-                              SizedBox(height: 24),
+                              const SizedBox(height: 24),
                               Center(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -102,16 +113,16 @@ class HomeScreen extends StatelessWidget {
                                       MediaQuery.of(context).size.width,
                                       40,
                                     ),
-                                    backgroundColor: Color(0xFF15B86C),
+                                    backgroundColor: const Color(0xFF15B86C),
                                   ),
                                   onPressed: () {
-                                    if (_formkey.currentState?.validate() ??
+                                    if (_formKey.currentState?.validate() ??
                                         false) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => WelcomeScreen(
-                                            name: _nameController.text,
+                                            name: _nameController.text.trim(),
                                           ),
                                         ),
                                       );
@@ -130,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16), // just a little breathing room
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
