@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task3/models/task.dart';
-import 'package:flutter_task3/providers/task_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/task_bloc.dart';
+import '../bloc/task_event.dart';
+import '../models/task.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -17,9 +18,17 @@ class _TaskScreenState extends State<TaskScreen> {
   bool _isHighPriority = false;
 
   @override
+  void dispose() {
+    _taskNameController.dispose();
+    _taskDescriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E1E),
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E1E1E),
         elevation: 0,
@@ -30,132 +39,140 @@ class _TaskScreenState extends State<TaskScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                Text(
-                  'Task Name',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(color: Colors.white),
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _taskNameController,
-                  style: const TextStyle(color: Colors.white),
-                  cursorColor: Colors.white,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Enter a task name'
-                      : null,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color(0xFF282828),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: 'Finish UI design for login screen',
-                    hintStyle: const TextStyle(color: Colors.white54),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-                Text(
-                  'Task Description',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(color: Colors.white),
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _taskDescriptionController,
-                  maxLines: 6,
-                  style: const TextStyle(color: Colors.white),
-                  cursorColor: Colors.white,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Enter a task description'
-                      : null,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color(0xFF282828),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText:
-                        'Finish onboarding UI and hand off to devs by Thursday.',
-                    hintStyle: const TextStyle(color: Colors.white54),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-                Row(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom -
+                  kToolbarHeight, // account for AppBar height
+            ),
+            child: IntrinsicHeight(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 16),
                     Text(
-                      'High Priority',
+                      'Task Name',
                       style: Theme.of(
                         context,
                       ).textTheme.titleMedium?.copyWith(color: Colors.white),
                     ),
-                    const Spacer(),
-                    Switch(
-                      activeTrackColor: const Color(0xFF15B86C),
-                      activeColor: Colors.white,
-                      value: _isHighPriority,
-                      onChanged: (value) {
-                        setState(() {
-                          _isHighPriority = value;
-                        });
-                      },
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _taskNameController,
+                      style: const TextStyle(color: Colors.white),
+                      cursorColor: Colors.white,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Enter a task name'
+                          : null,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFF282828),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                        hintText: 'Finish UI design for login screen',
+                        hintStyle: const TextStyle(color: Colors.white54),
+                      ),
                     ),
+
+                    const SizedBox(height: 20),
+                    Text(
+                      'Task Description',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _taskDescriptionController,
+                      maxLines: 6,
+                      style: const TextStyle(color: Colors.white),
+                      cursorColor: Colors.white,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Enter a task description'
+                          : null,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFF282828),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                        hintText:
+                            'Finish onboarding UI and hand off to devs by Thursday.',
+                        hintStyle: const TextStyle(color: Colors.white54),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Text(
+                          'High Priority',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                        const Spacer(),
+                        Switch(
+                          activeTrackColor: const Color(0xFF15B86C),
+                          activeThumbColor: Colors.white,
+                          value: _isHighPriority,
+                          onChanged: (value) {
+                            setState(() {
+                              _isHighPriority = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+
+                    const Spacer(),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF15B86C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        label: Text(
+                          'Add Task',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            final task = Task(
+                              name: _taskNameController.text.trim(),
+                              description: _taskDescriptionController.text
+                                  .trim(),
+                              highPriority: _isHighPriority,
+                            );
+                            context.read<TaskBloc>().add(AddTaskEvent(task));
+                            Navigator.pop(context);
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
-
-                const Spacer(),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF15B86C),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    label: Text(
-                      'Add Task',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final task = Task(
-                          name: _taskNameController.text,
-                          description: _taskDescriptionController.text,
-                          highPriority: _isHighPriority,
-                        );
-
-                        Provider.of<TaskProvider>(
-                          context,
-                          listen: false,
-                        ).addTask(task);
-
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
+              ),
             ),
           ),
         ),

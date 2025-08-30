@@ -22,132 +22,128 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      backgroundColor: const Color(0xFF181818),
+      resizeToAvoidBottomInset: true, // allows layout to adjust for keyboard
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+
+                  // Logo Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset('images/Vector.svg'),
-                          const SizedBox(width: 16),
-                          Text(
-                            'Tasky',
-                            style: Theme.of(context).textTheme.displayLarge,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 116),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Welcome To Tasky',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          const SizedBox(width: 8),
-                          SvgPicture.asset('images/waving-hand.svg'),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
+                      SvgPicture.asset('images/Vector.svg', height: 28),
+                      const SizedBox(width: 8),
                       Text(
-                        'Your productivity journey starts here.',
-                        style: Theme.of(context).textTheme.displaySmall,
+                        'Tasky',
+                        style: Theme.of(context).textTheme.displayLarge
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
-                      const SizedBox(height: 24),
-                      Center(child: SvgPicture.asset('images/pana.svg')),
-                      const SizedBox(height: 28),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsetsDirectional.only(
-                                  start: 3,
-                                ),
-                                child: Text(
-                                  'Full Name',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.displaySmall,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              TextFormField(
-                                controller: _nameController,
-                                style: const TextStyle(color: Colors.white),
-                                cursorColor: Colors.white,
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return 'Enter a valid name';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: const Color(0xFF282828),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  hintText: 'e.g. Sarah Khalid',
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              Center(
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(
-                                      MediaQuery.of(context).size.width,
-                                      40,
-                                    ),
-                                    backgroundColor: const Color(0xFF15B86C),
-                                  ),
-                                  onPressed: () {
-                                    if (_formKey.currentState?.validate() ??
-                                        false) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => WelcomeScreen(
-                                            name: _nameController.text.trim(),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Text(
-                                    "Let's Get Started",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall!
-                                        .copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
                     ],
                   ),
-                ),
+
+                  const SizedBox(height: 40),
+
+                  // Welcome Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Welcome To Tasky',
+                          style: Theme.of(context).textTheme.displayMedium,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      SvgPicture.asset('images/waving-hand.svg', height: 24),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
+                  Text(
+                    'Your productivity journey starts here.',
+                    style: Theme.of(context).textTheme.displaySmall,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Illustration
+                  SvgPicture.asset('images/pana.svg', height: 160),
+
+                  const SizedBox(height: 24),
+
+                  // Form
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Full Name',
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _nameController,
+                          style: const TextStyle(color: Colors.white),
+                          cursorColor: Colors.white,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Enter a valid name';
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            hintText: 'e.g. Sarah Khalid',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Spacer(),
+
+                  // Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WelcomeScreen(
+                                name: _nameController.text.trim(),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text("Let's Get Started"),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                ],
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
